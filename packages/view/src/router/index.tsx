@@ -1,7 +1,8 @@
-import { createBrowserRouter, RouterProvider } from "react-router";
-import { App } from "@/App";
-import { HomePage } from "@/features/home/HomePage";
-import { ParcoursPage } from "@/features/parcours/ParcoursPage";
+import { App } from "@/App"
+import { ExercicesPage } from "@/features/exercices/ExercicesPage"
+import { HomePage } from "@/features/home/HomePage"
+import { ParcoursPage } from "@/features/parcours/ParcoursPage"
+import { createBrowserRouter, RouterProvider } from "react-router"
 
 export const router = createBrowserRouter([
   {
@@ -16,10 +17,14 @@ export const router = createBrowserRouter([
         path: "parcours",
         element: <ParcoursPage />,
       },
+      {
+        path: "exercices",
+        element: <ExercicesPage />,
+      },
     ],
   },
-]);
+])
 
 export function Router() {
-  return <RouterProvider router={router} />;
+  return <RouterProvider router={router} />
 }
