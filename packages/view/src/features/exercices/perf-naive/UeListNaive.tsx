@@ -1,17 +1,3 @@
-/**
- * EXERCICE PERFORMANCE - VERSION NAÏVE (NON OPTIMISÉE)
- *
- * Ce composant contient volontairement des problèmes de performance.
- * Les étudiants doivent identifier et corriger ces problèmes.
- *
- * 🐛 PROBLÈMES À TROUVER :
- * 1. Pas de virtualisation (tous les éléments sont rendus)
- * 2. Filtrage recalculé à chaque render
- * 3. Statistiques recalculées à chaque render
- * 4. Fonctions recréées à chaque render (casse memo)
- * 5. Composant UeRow non mémoïsé
- */
-
 import { useState, useEffect } from "react"
 
 // Types
@@ -51,7 +37,6 @@ function generateUes(count: number): Ue[] {
   }))
 }
 
-// Composant ligne (NON optimisé - pas de memo)
 function UeRow({
   ue,
   isSelected,
@@ -63,7 +48,6 @@ function UeRow({
   onSelect: (id: number) => void
   onDelete: (id: number) => void
 }) {
-  // 👀 Observer ce log dans la console
   console.log(`🔴 Rendering UeRow ${ue.id}`)
 
   return (
@@ -101,14 +85,11 @@ export function UeListNaive() {
   const [minEcts, setMinEcts] = useState(0)
   const [renderCount, setRenderCount] = useState(0)
 
-  // Charger les données au montage
-  // 🐛 PROBLÈME 0 : On charge 1000 UEs sans virtualisation = LENT !
   useEffect(() => {
     console.log("📦 Génération de 1 000 UEs (sans virtualisation)...")
     setUes(generateUes(1000))
   }, [])
 
-  // 🐛 PROBLÈME 1 : Recalculé à CHAQUE render (même si ues/search/minEcts n'ont pas changé)
   const filteredUes = ues.filter((ue) => {
     const matchSearch =
       ue.intitule.toLowerCase().includes(search.toLowerCase()) ||
@@ -118,7 +99,6 @@ export function UeListNaive() {
   })
   console.log("🔄 Filtrage recalculé")
 
-  // 🐛 PROBLÈME 2 : Statistiques recalculées à chaque render
   const stats = {
     total: filteredUes.length,
     selected: selectedIds.size,
@@ -134,8 +114,6 @@ export function UeListNaive() {
   }
   console.log("🔄 Stats recalculées")
 
-  // 🐛 PROBLÈME 3 : Nouvelles fonctions créées à chaque render
-  // Cela casse l'optimisation de memo() car les props changent à chaque fois
   const handleSelect = (id: number) => {
     setSelectedIds((prev) => {
       const next = new Set(prev)
@@ -259,7 +237,6 @@ export function UeListNaive() {
         </div>
       </div>
 
-      {/* 🐛 PROBLÈME : Liste NON virtualisée - tous les éléments sont dans le DOM */}
       <div className="flex-1 border rounded-lg overflow-auto min-h-[400px] max-h-[500px]">
         {filteredUes.length > 0 ? (
           <div>

@@ -1,6 +1,5 @@
 import { useState } from "react"
 import { UeListNaive } from "./perf-naive/UeListNaive"
-import { UeListOptimized } from "./perf-optimized/UeListOptimized"
 
 type TabType = "naive" | "optimized" | "instructions"
 
@@ -58,7 +57,7 @@ export function ExercicesPage() {
       <div className="flex-1 overflow-auto">
         {activeTab === "instructions" && <Instructions />}
         {activeTab === "naive" && <UeListNaive />}
-        {activeTab === "optimized" && <UeListOptimized />}
+        {activeTab === "optimized" && <p>TODO</p>}
       </div>
     </div>
   )
