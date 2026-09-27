@@ -11,5 +11,14 @@
   },
   "peerDependencies": {
     "typescript": "^5"
+  },
+  "scripts": {
+    "dev:front": "bun run --cwd packages/view dev",
+    "dev:back": "bun run --cwd packages/back dev",
+    "lint": "bun run --cwd packages/view lint && bun run --cwd packages/back lint",
+    "typecheck": "bunx tsc -b packages/view && bun run --cwd packages/back typecheck",
+    "test": "bun test tests",
+    "build": "bun run --cwd packages/view build",
+    "check": "bun run lint && bun run typecheck && bun run test && bun run build"
   }
 }

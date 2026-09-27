@@ -183,17 +183,16 @@ export function getUesForParcours(parcoursId: number): Ue[] {
 
 export function updateUeParcours(ueId: number, parcoursIds: number[]): boolean {
   try {
-    // Remove all existing associations
-    const deleteStmt = db.prepare("DELETE FROM ue_parcours WHERE ue_id = ?")
-    deleteStmt.run(ueId)
-
-    // Add new associations
-    const insertStmt = db.prepare(
-      "INSERT INTO ue_parcours (ue_id, parcours_id) VALUES (?, ?)"
-    )
-    for (const parcoursId of parcoursIds) {
-      insertStmt.run(ueId, parcoursId)
-    }
+    // Roll back the deletion and inserts together if one association is invalid.
+    db.transaction(() => {
+      db.prepare("DELETE FROM ue_parcours WHERE ue_id = ?").run(ueId)
+      const insert = db.prepare(
+        "INSERT INTO ue_parcours (ue_id, parcours_id) VALUES (?, ?)"
+      )
+      for (const parcoursId of new Set(parcoursIds)) {
+        insert.run(ueId, parcoursId)
+      }
+    })()
     return true
   } catch (error) {
     console.error("Error updating UE parcours:", error)

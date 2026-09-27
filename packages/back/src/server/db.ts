@@ -1,6 +1,11 @@
 import { Database } from "bun:sqlite"
+import { fileURLToPath } from "node:url"
 
-export const db = new Database("data.db")
+export const db = new Database(
+  process.env.DATABASE_PATH ?? fileURLToPath(new URL("../../data.db", import.meta.url))
+)
+// SQLite must enforce the relations declared below.
+db.run("PRAGMA foreign_keys = ON")
 
 export const initDatabase = () => {
   db.run(`
