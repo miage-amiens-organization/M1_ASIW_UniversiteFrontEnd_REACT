@@ -1,6 +1,6 @@
 import { cn } from "@/utils/cn"
 import { useState } from "react"
-import { Link, useLocation } from "react-router"
+import { Link, useLocation } from "@tanstack/react-router"
 
 export function Sidebar() {
   const location = useLocation()
@@ -10,7 +10,7 @@ export function Sidebar() {
     { path: "/", label: "Accueil", icon: "🏠" },
     { path: "/parcours", label: "Parcours", icon: "📚" },
     { path: "/exercices", label: "Exercices Perf", icon: "🚀" },
-  ]
+  ] as const
 
   const isActive = (path: string) => {
     return location.pathname === path

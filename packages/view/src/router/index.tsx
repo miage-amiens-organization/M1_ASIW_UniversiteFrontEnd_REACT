@@ -2,28 +2,48 @@ import { App } from "@/App"
 import { ExercicesPage } from "@/features/exercices/ExercicesPage"
 import { HomePage } from "@/features/home/HomePage"
 import { ParcoursPage } from "@/features/parcours/ParcoursPage"
-import { createBrowserRouter, RouterProvider } from "react-router"
+import {
+  createRootRoute,
+  createRoute,
+  createRouter,
+  RouterProvider,
+} from "@tanstack/react-router"
 
-export const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <App />,
-    children: [
-      {
-        path: "",
-        element: <HomePage />,
-      },
-      {
-        path: "parcours",
-        element: <ParcoursPage />,
-      },
-      {
-        path: "exercices",
-        element: <ExercicesPage />,
-      },
-    ],
-  },
+const rootRoute = createRootRoute({
+  component: App,
+})
+
+const indexRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/",
+  component: HomePage,
+})
+
+const parcoursRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/parcours",
+  component: ParcoursPage,
+})
+
+const exercicesRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/exercices",
+  component: ExercicesPage,
+})
+
+const routeTree = rootRoute.addChildren([
+  indexRoute,
+  parcoursRoute,
+  exercicesRoute,
 ])
+
+export const router = createRouter({ routeTree })
+
+declare module "@tanstack/react-router" {
+  interface Register {
+    router: typeof router
+  }
+}
 
 export function Router() {
   return <RouterProvider router={router} />

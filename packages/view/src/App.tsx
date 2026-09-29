@@ -1,4 +1,5 @@
-import { Outlet } from "react-router"
+import { Outlet } from "@tanstack/react-router"
+import { TanStackRouterDevtools } from "@tanstack/react-router-devtools"
 import { Sidebar } from "@/components/Sidebar"
 
 export function App() {
@@ -8,6 +9,7 @@ export function App() {
       <div className="flex-1 overflow-auto p-4">
         <Outlet />
       </div>
+      <TanStackRouterDevtools position="bottom-right" />
     </div>
   )
 }
