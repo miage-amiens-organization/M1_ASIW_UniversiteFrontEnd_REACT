@@ -1,4 +1,5 @@
 import { App } from "@/App"
+import { features } from "@/config/features"
 import { ExercicesPage } from "@/features/exercices/ExercicesPage"
 import { HomePage } from "@/features/home/HomePage"
 import { ParcoursPage } from "@/features/parcours/ParcoursPage"
@@ -6,6 +7,7 @@ import {
   createRootRoute,
   createRoute,
   createRouter,
+  redirect,
   RouterProvider,
 } from "@tanstack/react-router"
 
@@ -28,6 +30,10 @@ const parcoursRoute = createRoute({
 const exercicesRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/exercices",
+  // Page masquée tant que le flag est désactivé
+  beforeLoad: () => {
+    if (!features.exercicesPerf) throw redirect({ to: "/" })
+  },
   component: ExercicesPage,
 })
 
