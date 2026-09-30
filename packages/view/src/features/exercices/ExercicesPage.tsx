@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { PageContainer, PageHeader } from "@/components/layout/Page"
 import { UeListNaive } from "./perf-naive/UeListNaive"
 
 type TabType = "naive" | "optimized" | "instructions"
@@ -7,17 +8,13 @@ export function ExercicesPage() {
   const [activeTab, setActiveTab] = useState<TabType>("instructions")
 
   return (
-    <div className="p-6 h-full flex flex-col">
-      {/* Header avec onglets */}
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold mb-2">
-          🎓 Exercice : Optimisation des performances React
-        </h1>
-        <p className="text-gray-600 mb-4">
-          Comparez une version naïve et une version optimisée d'une liste
-          virtualisée de 10 000 éléments.
-        </p>
+    <PageContainer className="flex h-full flex-col">
+      <PageHeader
+        title="Exercice : Optimisation des performances React"
+        description="Comparez une version naïve et une version optimisée d'une liste virtualisée de 10 000 éléments."
+      />
 
+      <div className="mb-6">
         {/* Tabs */}
         <div className="flex gap-2 border-b">
           <button
@@ -59,7 +56,7 @@ export function ExercicesPage() {
         {activeTab === "naive" && <UeListNaive />}
         {activeTab === "optimized" && <p>TODO</p>}
       </div>
-    </div>
+    </PageContainer>
   )
 }
 

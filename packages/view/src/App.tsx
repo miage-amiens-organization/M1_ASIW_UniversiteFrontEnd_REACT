@@ -1,13 +1,17 @@
 import { Outlet } from "@tanstack/react-router"
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools"
-import { Sidebar } from "@/components/Sidebar"
+import { Header } from "@/components/layout/Header"
+import { Sidebar } from "@/components/layout/Sidebar"
 
 export function App() {
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex h-screen bg-zinc-50 text-zinc-900">
       <Sidebar />
-      <div className="flex-1 overflow-auto p-4">
-        <Outlet />
+      <div className="flex min-w-0 flex-1 flex-col">
+        <Header />
+        <main className="flex-1 overflow-auto">
+          <Outlet />
+        </main>
       </div>
       <TanStackRouterDevtools position="bottom-right" />
     </div>

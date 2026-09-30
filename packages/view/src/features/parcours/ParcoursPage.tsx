@@ -1,14 +1,14 @@
+import { Card, PageContainer, PageHeader } from "@/components/layout/Page";
+
 export function ParcoursPage() {
   return (
-    <div className="w-full h-full p-8">
-      <h1 className="text-4xl font-bold text-gray-900 mb-4">
-        Parcours
-      </h1>
-      <div className="bg-white rounded-lg shadow p-6 w-full">
-        <p className="text-gray-700">
+    <PageContainer>
+      <PageHeader title="Parcours" description="Liste et gestion des parcours." />
+      <Card>
+        <p className="text-sm text-zinc-600">
           Parcours management page - coming soon
         </p>
-      </div>
-    </div>
+      </Card>
+    </PageContainer>
   );
 }
