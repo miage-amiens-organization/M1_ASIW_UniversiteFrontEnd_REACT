@@ -1,4 +1,5 @@
 import { cn } from "@/utils/cn"
+import { Card as UiCard, CardContent } from "@/components/ui/card"
 import type { ReactNode } from "react"
 
 type PageContainerProps = {
@@ -45,13 +46,13 @@ type CardProps = {
 
 export function Card({ children, className }: CardProps) {
   return (
-    <div
+    <UiCard
       className={cn(
-        "rounded-lg border border-zinc-200 bg-white p-6 shadow-xs",
+        "gap-0 rounded-lg border-zinc-200 bg-white shadow-xs",
         className
       )}
     >
-      {children}
-    </div>
+      <CardContent>{children}</CardContent>
+    </UiCard>
   )
 }

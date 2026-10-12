@@ -1,4 +1,5 @@
 import { cn } from "@/utils/cn"
+import { Button } from "@/components/ui/button"
 import { useState } from "react"
 import { Link } from "@tanstack/react-router"
 import { PanelLeftClose, PanelLeftOpen } from "lucide-react"
@@ -56,12 +57,15 @@ export function Sidebar() {
 
       {/* Pied de sidebar */}
       <div className="border-t border-zinc-200 p-3">
-        <button
+        <Button
           type="button"
+          variant="ghost"
           onClick={() => setIsOpen(!isOpen)}
           title={isOpen ? "Réduire le menu" : "Déplier le menu"}
+          aria-label={isOpen ? "Réduire le menu" : "Déplier le menu"}
+          aria-expanded={isOpen}
           className={cn(
-            "flex h-9 w-full items-center gap-3 rounded-md px-2.5 text-sm text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-900",
+            "h-9 w-full justify-start gap-3 px-2.5 text-sm font-normal text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900",
             !isOpen && "justify-center px-0"
           )}
         >
@@ -71,7 +75,7 @@ export function Sidebar() {
             <PanelLeftOpen className="size-4 shrink-0" />
           )}
           {isOpen && <span>Réduire</span>}
-        </button>
+        </Button>
       </div>
     </aside>
   )

@@ -2,6 +2,33 @@
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
+## shadcn/ui
+
+Le frontend est configuré pour [shadcn/ui avec Vite](https://ui.shadcn.com/docs/installation/vite), React 19 et Tailwind CSS 4. La configuration est dans `components.json`, avec le style `new-york`, la palette `zinc` et les icônes Lucide.
+
+Les composants `Button` et `Card` sont dans `src/components/ui/`. Ils sont utilisés dans la barre latérale et le conteneur de carte des pages. Exemple :
+
+```tsx
+import { Button } from "@/components/ui/button"
+
+<Button variant="outline">Enregistrer</Button>
+```
+
+Pour ajouter un composant, depuis la racine du projet :
+
+```sh
+bunx --bun shadcn add input --cwd packages/view
+```
+
+Pour vérifier uniquement le frontend :
+
+```sh
+bun run --cwd packages/view lint
+bun run --cwd packages/view build
+```
+
+Les pages et exercices restent le squelette à compléter par les élèves.
+
 Currently, two official plugins are available:
 
 - [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
