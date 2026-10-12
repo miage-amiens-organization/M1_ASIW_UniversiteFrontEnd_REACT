@@ -10,7 +10,7 @@ export async function createParcours(
   payload: CreateParcoursPayload
 ): Promise<Parcours | null> {
   try {
-    const anneeFormation = payload.anneeFormation || 1;
+    const anneeFormation = payload.anneeFormation ?? 1;
     const stmt = db.prepare(
       "INSERT INTO parcours (nomParcours, anneeFormation) VALUES (?, ?)"
     );
@@ -77,7 +77,7 @@ export function updateParcours(
       return null;
     }
 
-    const nomParcours = payload.nomParcours || parcours.nomParcours;
+    const nomParcours = payload.nomParcours ?? parcours.nomParcours;
     const anneeFormation =
       payload.anneeFormation !== undefined
         ? payload.anneeFormation

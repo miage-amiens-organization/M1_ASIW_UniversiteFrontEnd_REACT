@@ -56,8 +56,8 @@ export function updateUe(id: number, payload: UpdateUePayload): Ue | null {
       return null
     }
 
-    const numeroUe = payload.numeroUe || ue.numeroUe
-    const intitule = payload.intitule || ue.intitule
+    const numeroUe = payload.numeroUe ?? ue.numeroUe
+    const intitule = payload.intitule ?? ue.intitule
 
     const stmt = db.prepare(
       "UPDATE ues SET numeroUe = ?, intitule = ? WHERE id = ?"

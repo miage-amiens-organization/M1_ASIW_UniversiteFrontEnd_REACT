@@ -11,10 +11,6 @@ import {
   getEtudiantById,
   updateEtudiant,
 } from "./server/services/etudiant/etudiants.service"
-import type {
-  CreateParcoursPayload,
-  UpdateParcoursPayload,
-} from "./server/models/Parcours"
 import {
   createParcours,
   deleteParcours,
@@ -23,7 +19,6 @@ import {
   getParcoursWithInscrits,
   updateParcours,
 } from "./server/services/parcours/parcours.service"
-import type { CreateUePayload, UpdateUePayload } from "./server/models/Ue"
 import {
   createUe,
   deleteUe,
@@ -38,10 +33,15 @@ import {
   updateUeParcours,
 } from "./server/services/ue/ue.service"
 
+import {
+  createParcoursSchema, updateParcoursSchema, createUeSchema, updateUeSchema,
+  ueParcoursSchema, readBody, readId, serverError,
+} from "./server/validation"
+
 initDatabase()
 
 const server = serve({
-  port: 3001,
+  port: Number(process.env.PORT ?? 3001),
   routes: {
     "/api/etudiants": {
       GET: async () => {
@@ -167,14 +167,8 @@ const server = serve({
 
       POST: async (req: Request) => {
         try {
-          const body = (await req.json()) as CreateParcoursPayload
-
-          if (!body.nomParcours) {
-            return Response.json(
-              { error: "nomParcours is required" },
-              { status: 400 }
-            )
-          }
+          const body = await readBody(req, createParcoursSchema)
+          if (body instanceof Response) return body
 
           const parcours = await createParcours(body)
           if (!parcours) {
@@ -188,18 +182,16 @@ const server = serve({
             { message: "Parcours created successfully", parcours },
             { status: 201 }
           )
-        } catch (_error) {
-          return Response.json(
-            { error: "Invalid request body" },
-            { status: 400 }
-          )
+        } catch (error) {
+          return serverError(error)
         }
       },
     },
 
     "/api/parcours/:id": {
       GET: async (req) => {
-        const id = parseInt(req.params.id)
+        const id = readId(req.params.id)
+        if (id instanceof Response) return id
 
         const parcours = getParcoursById(id)
         if (!parcours) {
@@ -211,8 +203,10 @@ const server = serve({
 
       PUT: async (req) => {
         try {
-          const id = parseInt(req.params.id)
-          const body = (await req.json()) as UpdateParcoursPayload
+          const id = readId(req.params.id)
+          if (id instanceof Response) return id
+          const body = await readBody(req, updateParcoursSchema)
+          if (body instanceof Response) return body
 
           const parcours = getParcoursById(id)
           if (!parcours) {
@@ -234,16 +228,14 @@ const server = serve({
             { message: "Parcours updated successfully", parcours: updated },
             { status: 200 }
           )
-        } catch (_error) {
-          return Response.json(
-            { error: "Invalid request body" },
-            { status: 400 }
-          )
+        } catch (error) {
+          return serverError(error)
         }
       },
 
       DELETE: async (req) => {
-        const id = parseInt(req.params.id)
+        const id = readId(req.params.id)
+        if (id instanceof Response) return id
 
         const parcours = getParcoursById(id)
         if (!parcours) {
@@ -267,7 +259,8 @@ const server = serve({
 
     "/api/parcours/:id/inscrits": {
       GET: async (req) => {
-        const id = parseInt(req.params.id)
+        const id = readId(req.params.id)
+        if (id instanceof Response) return id
 
         const parcours = getParcoursById(id)
         if (!parcours) {
@@ -281,7 +274,8 @@ const server = serve({
 
     "/api/parcours/:id/ues": {
       GET: async (req) => {
-        const id = parseInt(req.params.id)
+        const id = readId(req.params.id)
+        if (id instanceof Response) return id
 
         const parcours = getParcoursById(id)
         if (!parcours) {
@@ -301,19 +295,13 @@ const server = serve({
 
       POST: async (req: Request) => {
         try {
-          const body = (await req.json()) as CreateUePayload
-
-          if (!body.numeroUe || !body.intitule) {
-            return Response.json(
-              { error: "numeroUe and intitule are required" },
-              { status: 400 }
-            )
-          }
+          const body = await readBody(req, createUeSchema)
+          if (body instanceof Response) return body
 
           const existingUe = getUeByNumero(body.numeroUe)
           if (existingUe) {
             return Response.json(
-              { error: "UE with this numeroUe already exists" },
+              { error: "Une UE avec ce numéro existe déjà." },
               { status: 409 }
             )
           }
@@ -330,18 +318,16 @@ const server = serve({
             { message: "UE created successfully", ue },
             { status: 201 }
           )
-        } catch (_error) {
-          return Response.json(
-            { error: "Invalid request body" },
-            { status: 400 }
-          )
+        } catch (error) {
+          return serverError(error)
         }
       },
     },
 
     "/api/ues/:id": {
       GET: async (req) => {
-        const id = parseInt(req.params.id)
+        const id = readId(req.params.id)
+        if (id instanceof Response) return id
 
         const ue = getUeById(id)
         if (!ue) {
@@ -353,12 +339,19 @@ const server = serve({
 
       PUT: async (req) => {
         try {
-          const id = parseInt(req.params.id)
-          const body = (await req.json()) as UpdateUePayload
+          const id = readId(req.params.id)
+          if (id instanceof Response) return id
+          const body = await readBody(req, updateUeSchema)
+          if (body instanceof Response) return body
 
           const ue = getUeById(id)
           if (!ue) {
             return Response.json({ error: "UE not found" }, { status: 404 })
+          }
+
+          const duplicate = body.numeroUe === undefined ? null : getUeByNumero(body.numeroUe)
+          if (duplicate && duplicate.id !== id) {
+            return Response.json({ error: "Une UE avec ce numéro existe déjà." }, { status: 409 })
           }
 
           const updated = updateUe(id, body)
@@ -373,16 +366,14 @@ const server = serve({
             { message: "UE updated successfully", ue: updated },
             { status: 200 }
           )
-        } catch (_error) {
-          return Response.json(
-            { error: "Invalid request body" },
-            { status: 400 }
-          )
+        } catch (error) {
+          return serverError(error)
         }
       },
 
       DELETE: async (req) => {
-        const id = parseInt(req.params.id)
+        const id = readId(req.params.id)
+        if (id instanceof Response) return id
 
         const ue = getUeById(id)
         if (!ue) {
@@ -406,7 +397,8 @@ const server = serve({
 
     "/api/ues/:id/parcours": {
       GET: async (req) => {
-        const id = parseInt(req.params.id)
+        const id = readId(req.params.id)
+        if (id instanceof Response) return id
 
         const ue = getUeById(id)
         if (!ue) {
@@ -419,19 +411,18 @@ const server = serve({
 
       PUT: async (req) => {
         try {
-          const id = parseInt(req.params.id)
-          const body = (await req.json()) as { parcoursIds: number[] }
+          const id = readId(req.params.id)
+          if (id instanceof Response) return id
+          const body = await readBody(req, ueParcoursSchema)
+          if (body instanceof Response) return body
 
           const ue = getUeById(id)
           if (!ue) {
             return Response.json({ error: "UE not found" }, { status: 404 })
           }
 
-          if (!body.parcoursIds || !Array.isArray(body.parcoursIds)) {
-            return Response.json(
-              { error: "parcoursIds array is required" },
-              { status: 400 }
-            )
+          if (body.parcoursIds.some(parcoursId => !getParcoursById(parcoursId))) {
+            return Response.json({ error: "Un des parcours demandés n’existe pas." }, { status: 400 })
           }
 
           const updated = updateUeParcours(id, body.parcoursIds)
@@ -447,19 +438,18 @@ const server = serve({
             { message: "UE parcours updated successfully", ue: ueWithParcours },
             { status: 200 }
           )
-        } catch (_error) {
-          return Response.json(
-            { error: "Invalid request body" },
-            { status: 400 }
-          )
+        } catch (error) {
+          return serverError(error)
         }
       },
     },
 
     "/api/ues/:ueId/parcours/:parcoursId": {
       POST: async (req) => {
-        const ueId = parseInt(req.params.ueId)
-        const parcoursId = parseInt(req.params.parcoursId)
+        const ueId = readId(req.params.ueId)
+        if (ueId instanceof Response) return ueId
+        const parcoursId = readId(req.params.parcoursId)
+        if (parcoursId instanceof Response) return parcoursId
 
         const ue = getUeById(ueId)
         if (!ue) {
@@ -486,8 +476,10 @@ const server = serve({
       },
 
       DELETE: async (req) => {
-        const ueId = parseInt(req.params.ueId)
-        const parcoursId = parseInt(req.params.parcoursId)
+        const ueId = readId(req.params.ueId)
+        if (ueId instanceof Response) return ueId
+        const parcoursId = readId(req.params.parcoursId)
+        if (parcoursId instanceof Response) return parcoursId
 
         const ue = getUeById(ueId)
         if (!ue) {
@@ -514,6 +506,8 @@ const server = serve({
       },
     },
   },
+
+  error: serverError,
 
   development: process.env.NODE_ENV !== "production" && {
     hmr: true,
